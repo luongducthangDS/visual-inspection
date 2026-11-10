@@ -1,0 +1,252 @@
+{
+  "cnn": {
+    "AUROC": 0.7410714285714285,
+    "AP": 0.6026303124845515,
+    "op": {
+      "threshold": 0.47071853280067444,
+      "precision": 0.3005464480874317,
+      "recall": 0.9821428571428571,
+      "f1": 0.4602510460251046,
+      "FNR": 0.017857142857142856,
+      "FPR": 0.7710843373493976,
+      "missed": 1,
+      "false_alarms": 128
+    },
+    "at_0.5": {
+      "threshold": 0.5,
+      "precision": 0.35365853658536583,
+      "recall": 0.5178571428571429,
+      "f1": 0.42028985507246375,
+      "FNR": 0.48214285714285715,
+      "FPR": 0.3192771084337349,
+      "missed": 27,
+      "false_alarms": 53
+    },
+    "latency": {
+      "p50_ms": 82.42339995922521,
+      "p95_ms": 92.94667997164652
+    },
+    "per_product": {
+      "bottle": {
+        "threshold": 0.47071853280067444,
+        "precision": 0.20689655172413793,
+        "recall": 1.0,
+        "f1": 0.34285714285714286,
+        "FNR": 0.0,
+        "FPR": 1.0,
+        "missed": 0,
+        "false_alarms": 46,
+        "n": 58,
+        "defects": 12
+      },
+      "metal_nut": {
+        "threshold": 0.47071853280067444,
+        "precision": 0.4318181818181818,
+        "recall": 1.0,
+        "f1": 0.6031746031746031,
+        "FNR": 0.0,
+        "FPR": 0.5208333333333334,
+        "missed": 0,
+        "false_alarms": 25,
+        "n": 67,
+        "defects": 19
+      },
+      "screw": {
+        "threshold": 0.47071853280067444,
+        "precision": 0.2962962962962963,
+        "recall": 0.96,
+        "f1": 0.4528301886792453,
+        "FNR": 0.04,
+        "FPR": 0.7916666666666666,
+        "missed": 1,
+        "false_alarms": 57,
+        "n": 97,
+        "defects": 25
+      }
+    },
+    "per_defect_recall": {
+      "bottle/broken_large": 1.0,
+      "bottle/broken_small": 1.0,
+      "bottle/contamination": 1.0,
+      "metal_nut/bent": 1.0,
+      "metal_nut/color": 1.0,
+      "metal_nut/flip": 1.0,
+      "metal_nut/scratch": 1.0,
+      "screw/manipulated_front": 0.8,
+      "screw/scratch_head": 1.0,
+      "screw/scratch_neck": 1.0,
+      "screw/thread_side": 1.0,
+      "screw/thread_top": 1.0
+    },
+    "missed": [
+      "data/raw/mvtec/screw/test/manipulated_front/012.png"
+    ]
+  },
+  "resnet18": {
+    "AUROC": 0.9709552495697074,
+    "AP": 0.940237894221852,
+    "op": {
+      "threshold": 0.15678101778030396,
+      "precision": 0.574468085106383,
+      "recall": 0.9642857142857143,
+      "f1": 0.7200000000000001,
+      "FNR": 0.03571428571428571,
+      "FPR": 0.24096385542168675,
+      "missed": 2,
+      "false_alarms": 40
+    },
+    "at_0.5": {
+      "threshold": 0.5,
+      "precision": 0.7846153846153846,
+      "recall": 0.9107142857142857,
+      "f1": 0.8429752066115703,
+      "FNR": 0.08928571428571429,
+      "FPR": 0.08433734939759036,
+      "missed": 5,
+      "false_alarms": 14
+    },
+    "latency": {
+      "p50_ms": 136.8745499639772,
+      "p95_ms": 171.8203199910931
+    },
+    "per_product": {
+      "bottle": {
+        "threshold": 0.15678101778030396,
+        "precision": 1.0,
+        "recall": 0.9166666666666666,
+        "f1": 0.9565217391304348,
+        "FNR": 0.08333333333333333,
+        "FPR": 0.0,
+        "missed": 1,
+        "false_alarms": 0,
+        "n": 58,
+        "defects": 12
+      },
+      "metal_nut": {
+        "threshold": 0.15678101778030396,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "FNR": 0.0,
+        "FPR": 0.0,
+        "missed": 0,
+        "false_alarms": 0,
+        "n": 67,
+        "defects": 19
+      },
+      "screw": {
+        "threshold": 0.15678101778030396,
+        "precision": 0.375,
+        "recall": 0.96,
+        "f1": 0.5393258426966292,
+        "FNR": 0.04,
+        "FPR": 0.5555555555555556,
+        "missed": 1,
+        "false_alarms": 40,
+        "n": 97,
+        "defects": 25
+      }
+    },
+    "per_defect_recall": {
+      "bottle/broken_large": 1.0,
+      "bottle/broken_small": 1.0,
+      "bottle/contamination": 0.75,
+      "metal_nut/bent": 1.0,
+      "metal_nut/color": 1.0,
+      "metal_nut/flip": 1.0,
+      "metal_nut/scratch": 1.0,
+      "screw/manipulated_front": 0.8,
+      "screw/scratch_head": 1.0,
+      "screw/scratch_neck": 1.0,
+      "screw/thread_side": 1.0,
+      "screw/thread_top": 1.0
+    },
+    "missed": [
+      "data/raw/mvtec/bottle/test/contamination/003.png",
+      "data/raw/mvtec/screw/test/manipulated_front/012.png"
+    ]
+  },
+  "efficientnet_b0": {
+    "AUROC": 0.9875215146299484,
+    "AP": 0.9680819076353101,
+    "op": {
+      "threshold": 0.3115423917770386,
+      "precision": 0.7534246575342466,
+      "recall": 0.9821428571428571,
+      "f1": 0.8527131782945736,
+      "FNR": 0.017857142857142856,
+      "FPR": 0.10843373493975904,
+      "missed": 1,
+      "false_alarms": 18
+    },
+    "at_0.5": {
+      "threshold": 0.5,
+      "precision": 0.864406779661017,
+      "recall": 0.9107142857142857,
+      "f1": 0.8869565217391304,
+      "FNR": 0.08928571428571429,
+      "FPR": 0.04819277108433735,
+      "missed": 5,
+      "false_alarms": 8
+    },
+    "latency": {
+      "p50_ms": 153.9974000188522,
+      "p95_ms": 185.19861997920088
+    },
+    "per_product": {
+      "bottle": {
+        "threshold": 0.3115423917770386,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "FNR": 0.0,
+        "FPR": 0.0,
+        "missed": 0,
+        "false_alarms": 0,
+        "n": 58,
+        "defects": 12
+      },
+      "metal_nut": {
+        "threshold": 0.3115423917770386,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "FNR": 0.0,
+        "FPR": 0.0,
+        "missed": 0,
+        "false_alarms": 0,
+        "n": 67,
+        "defects": 19
+      },
+      "screw": {
+        "threshold": 0.3115423917770386,
+        "precision": 0.5714285714285714,
+        "recall": 0.96,
+        "f1": 0.7164179104477612,
+        "FNR": 0.04,
+        "FPR": 0.25,
+        "missed": 1,
+        "false_alarms": 18,
+        "n": 97,
+        "defects": 25
+      }
+    },
+    "per_defect_recall": {
+      "bottle/broken_large": 1.0,
+      "bottle/broken_small": 1.0,
+      "bottle/contamination": 1.0,
+      "metal_nut/bent": 1.0,
+      "metal_nut/color": 1.0,
+      "metal_nut/flip": 1.0,
+      "metal_nut/scratch": 1.0,
+      "screw/manipulated_front": 0.8,
+      "screw/scratch_head": 1.0,
+      "screw/scratch_neck": 1.0,
+      "screw/thread_side": 1.0,
+      "screw/thread_top": 1.0
+    },
+    "missed": [
+      "data/raw/mvtec/screw/test/manipulated_front/012.png"
+    ]
+  }
+}

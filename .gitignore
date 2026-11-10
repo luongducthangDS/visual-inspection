@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+data/raw/
+data/yolo/
+data/inspections/
+artifacts/*.pt
+artifacts/*.db
+artifacts/preds/
+artifacts/yolo/
+yolov8n.pt
+yolo11n.pt
+mlflow.db
+mlruns/
+runs/
+.pytest_cache/

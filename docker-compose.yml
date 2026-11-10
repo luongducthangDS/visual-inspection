@@ -1,0 +1,23 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: vqi
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vqi-local}
+      POSTGRES_DB: vqi
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vqi"]
+      interval: 3s
+      retries: 20
+  api:
+    build: .
+    depends_on:
+      db: {condition: service_healthy}
+    environment:
+      DATABASE_URL: postgresql+psycopg2://vqi:${POSTGRES_PASSWORD:-vqi-local}@db:5432/vqi
+    volumes: ["./artifacts:/app/artifacts:ro", "inspections:/app/inspections"]
+    ports: ["8002:8002"]
+volumes:
+  pgdata:
+  inspections:

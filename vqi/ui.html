@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quality Inspection</title>
+<style>
+  :root { --bg:#f6f6f4; --card:#fff; --ink:#1c1c1a; --muted:#6a6a64; --line:#e2e2dc; --bad:#c0392b; --ok:#2e7d4f; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.45 system-ui, sans-serif; background:var(--bg); color:var(--ink); }
+  main { max-width:1100px; margin:0 auto; padding:20px 16px; }
+  h1 { font-size:20px; margin:0 0 4px; } .muted { color:var(--muted); font-size:12px; }
+  .grid { display:grid; grid-template-columns:minmax(0,3fr) minmax(0,2fr); gap:14px; }
+  @media (max-width:760px) { .grid { grid-template-columns:1fr; } }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px; margin-bottom:14px; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:10px; }
+  select, button, input { font:inherit; padding:6px 10px; border:1px solid var(--line); border-radius:6px; background:#fff; }
+  button { background:var(--ink); color:#fff; border-color:var(--ink); cursor:pointer; }
+  button.secondary { background:#fff; color:var(--ink); }
+  .stage { position:relative; background:#111; border-radius:8px; overflow:hidden; min-height:220px; }
+  .stage img, .stage video { display:block; width:100%; }
+  .stage svg { position:absolute; inset:0; width:100%; height:100%; }
+  .badge { display:inline-block; padding:4px 10px; border-radius:20px; font-weight:600; color:#fff; }
+  .defect { background:var(--bad); } .pass { background:var(--ok); }
+  table { border-collapse:collapse; width:100%; font-size:13px; } td, th { padding:4px 6px; border-bottom:1px solid var(--line); text-align:left; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Kiểm tra chất lượng sản phẩm</h1>
+  <div class="muted" id="meta">loading…</div>
+  <div class="grid" style="margin-top:14px">
+    <div>
+      <div class="card">
+        <div class="row">
+          <select id="product"><option value="bottle">bottle</option><option value="metal_nut">metal_nut</option><option value="screw">screw</option></select>
+          <input type="file" id="file" accept="image/*" capture="environment">
+          <button class="secondary" id="cam">Bật camera</button>
+          <button id="snap" hidden>Chụp và kiểm tra</button>
+        </div>
+        <div class="stage" id="stage"><video id="video" autoplay playsinline hidden></video><img id="img" alt=""><svg id="overlay"></svg></div>
+      </div>
+      <div class="card" id="result"><span class="muted">Chọn ảnh hoặc chụp từ camera.</span></div>
+    </div>
+    <div>
+      <div class="card"><b>Tỷ lệ lỗi theo sản phẩm</b><table id="stats"></table></div>
+      <div class="card"><b>Lịch sử kiểm tra</b><table id="history"></table></div>
+    </div>
+  </div>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const j = (u, o) => fetch(u, o).then(async r => r.ok ? r.json() : Promise.reject((await r.json()).detail || r.statusText));
+
+async function send(blob, name) {
+  const fd = new FormData(); fd.append('file', blob, name); fd.append('product', $('product').value);
+  $('result').textContent = 'Đang kiểm tra…';
+  try {
+    const r = await j('/inspect', { method: 'POST', body: fd });
+    $('video').hidden = true; $('img').hidden = false; $('img').src = URL.createObjectURL(blob);
+    const [w, h] = r.image_size; const svg = $('overlay'); svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+    svg.innerHTML = r.boxes.map(b => `<rect x="${b.x1}" y="${b.y1}" width="${b.x2 - b.x1}" height="${b.y2 - b.y1}" fill="none" stroke="#ff3b30" stroke-width="${Math.max(w, h) / 200}"/>`
+      + `<text x="${b.x1}" y="${Math.max(b.y1 - 6, 14)}" fill="#ff3b30" font-size="${Math.max(w, h) / 30}">${b.conf.toFixed(2)}</text>`).join('');
+    $('result').innerHTML = `<span class="badge ${r.decision}">${r.decision === 'defect' ? 'LỖI' : 'ĐẠT'}</span>
+      &nbsp;điểm lỗi ${r.defect_score.toFixed(3)} (ngưỡng ${r.threshold.toFixed(3)}) · ${r.boxes.length} vùng nghi lỗi · ${r.latency_ms} ms · ${r.model}`;
+    refresh();
+  } catch (e) { $('result').textContent = 'Lỗi: ' + e; }
+}
+
+$('file').onchange = e => e.target.files[0] && send(e.target.files[0], e.target.files[0].name);
+$('cam').onclick = async () => {
+  try {
+    $('video').srcObject = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    $('video').hidden = false; $('img').hidden = true; $('overlay').innerHTML = ''; $('snap').hidden = false;
+  } catch (e) { $('result').textContent = 'Không mở được camera: ' + e.message; }
+};
+$('snap').onclick = () => {
+  const v = $('video'), c = document.createElement('canvas'); c.width = v.videoWidth; c.height = v.videoHeight;
+  c.getContext('2d').drawImage(v, 0, 0); c.toBlob(b => send(b, 'camera.jpg'), 'image/jpeg', 0.92);
+};
+
+async function refresh() {
+  const [s, h] = await Promise.all([j('/stats'), j('/history?limit=15')]);
+  $('stats').innerHTML = '<tr><th>Sản phẩm</th><th>Đã kiểm</th><th>Lỗi</th><th>Tỷ lệ</th></tr>' +
+    s.map(r => `<tr><td>${r.product}</td><td>${r.n}</td><td>${r.defects}</td><td>${(r.defect_rate * 100).toFixed(1)}%</td></tr>`).join('');
+  $('history').innerHTML = '<tr><th>Thời gian</th><th>Sản phẩm</th><th>Kết quả</th><th>Điểm</th></tr>' +
+    h.map(r => `<tr><td>${r.created_at.slice(11, 19)}</td><td>${r.product}</td><td><a href="/inspection/${r.id}/image" target="_blank">${r.decision}</a></td><td>${r.score.toFixed(3)}</td></tr>`).join('');
+}
+j('/health').then(h => $('meta').textContent = `Classifier ${h.classifier} · ngưỡng ${h.threshold.toFixed(3)} · detector ${h.detector ? 'YOLOv8n' : 'chưa có'}`).catch(e => $('meta').textContent = e);
+refresh();
+</script>
+</body>
+</html>
