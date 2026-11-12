@@ -26,12 +26,12 @@ Threshold per model = the highest value that keeps recall ≥ 95% on **validatio
 | Small CNN from scratch (4 conv blocks) | 0.741 | 0.603 | 1 / 56 (1.8%) | 77.1% | 0.301 | 82 ms |
 
 How to read it:
-- **Transfer learning is the difference**: with roughly 400 training images, the from-scratch CNN
+- **Transfer learning is the difference**: with 663 training images, the from-scratch CNN
   reaches AP 0.60 against 0.97. Its low miss rate is bought by flagging 77% of good parts. A miss rate
   means nothing without the false-alarm rate next to it.
-- **The threshold matters as much as the model.** At a naive 0.5, every model misses 8.9% of defects;
-  EfficientNet's recall-targeted threshold cuts that to 1.8% at the price of more re-checks (FPR 4.8%
-  → 10.8%).
+- **The threshold matters as much as the model.** At a naive 0.5, the two transfer models each miss
+  8.9% of defects while the from-scratch CNN misses 48%; EfficientNet's recall-targeted threshold cuts
+  that to 1.8% at the price of more re-checks (FPR 4.8% → 10.8%).
 - **Per product (EfficientNet):** bottle and metal_nut have 0 misses and 0 false alarms. All errors
   are on screw: 1 missed `manipulated_front` and a 25% false-alarm rate. Screw defects are tiny at
   256 px input, so the next step is higher resolution or tiling for that product.
