@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies (CPU-only torch)
+        run: |
+          pip install --upgrade pip
+          pip install \
+            --extra-index-url https://download.pytorch.org/whl/cpu \
+            torch==2.4.1 \
+            torchvision==0.19.1
+          pip install \
+            numpy==1.26.4 \
+            pandas==2.2.3 \
+            scikit-learn==1.5.2 \
+            fastapi==0.115.6 \
+            uvicorn==0.32.1 \
+            python-multipart==0.0.20 \
+            SQLAlchemy==2.0.36 \
+            httpx==0.28.1 \
+            pytest==8.3.4 \
+            Pillow
+
+      - name: Run input-validation tests (no raw images required)
+        run: pytest -v -k "test_rejects_bad_input"
